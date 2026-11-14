@@ -1,0 +1,140 @@
+---
+title: "R Credit Fairness Lab: Rebuilding a Credit-Risk Champion in R and Auditing Its Group Fairness"
+format:
+  html:
+    toc: true
+    number-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(knitr)
+metrics <- read.csv("../results/model_metrics.csv")
+fair <- read.csv("../results/fairness_audit.csv")
+gaps <- read.csv("../results/fairness_gaps.csv")
+verdicts <- jsonlite::read_json("../results/verdicts.json")
+splitv <- jsonlite::read_json("../results/split_verification.json")
+run <- jsonlite::read_json("../results/run_summary.json")
+fmt <- function(x, d = 4) formatC(x, format = "f", digits = d)
+```
+
+# Research question
+
+Does an R-native rebuild of the credit-risk champion from the Python lab
+`credit-risk-lab` (tidymodels: regularized logistic regression, gradient
+boosting through the xgboost engine, plus a GAM arm) reproduce the Python
+champion's discrimination on the same UCI Taiwan credit data and the same
+locked split, and where do group fairness gaps (equal opportunity,
+predictive parity) sit across sex, age bands, and education?
+
+The study was pre-registered in `PREREGISTRATION.md`, committed before
+any model was fit. Hypotheses, split, threshold, and verdict rules were
+frozen there.
+
+# Data and the locked split
+
+Data: UCI dataset 350, "default of credit card clients" (Taiwan, 2005),
+30,000 accounts, committed byte-identical in this repo (SHA-256 checked
+by the pipeline). Loading, recodes, and feature engineering mirror
+`credit-risk-lab` line for line.
+
+The split is the Python lab's split: stratified 70/30,
+`train_test_split(random_state = 42)`. It is replicated in pure R
+(`R/sklearn_split.R`, a numpy-compatible MT19937 plus the
+StratifiedShuffleSplit steps) and proven identical, not approximated:
+
+```{r}
+#| label: split-table
+data.frame(
+  quantity = c("train rows", "test rows", "test defaults",
+               "test event rate", "test positions SHA-256 (R)",
+               "reference SHA-256 (Python)", "identical"),
+  value = c(splitv$n_train, splitv$n_test,
+            splitv$n_test_per_class[[2]],
+            fmt(splitv$test_event_rate, 5),
+            splitv$r_test_positions_sha256,
+            splitv$reference_test_positions_sha256,
+            splitv$identical)
+) |> kable()
+```
+
+# Arms and headline results
+
+Arm 1 is ridge logistic regression (glmnet via tidymodels, penalty tuned
+by 5-fold cross-validation on the training set only; chosen penalty
+`r fmt(run$chosen_penalty_glmnet, 5)`). Arm 2 is gradient boosting with
+the xgboost engine at the Python champion's hyperparameters (300 trees,
+learning rate 0.06, depth 3). Arm 3 is a GAM fit directly with mgcv,
+with smooth terms for the continuous features: full interpretability is
+its purpose.
+
+```{r}
+#| label: metrics-table
+metrics$auc <- fmt(metrics$auc)
+metrics$ks <- fmt(metrics$ks)
+metrics$brier <- fmt(metrics$brier)
+kable(metrics, caption = "Test-set performance on the locked split. The Python champion row is the published reference from credit-risk-lab.")
+```
+
+Verdicts by the frozen rules:
+
+```{r}
+#| label: verdicts
+data.frame(
+  hypothesis = c("H1", "H2", "H3"),
+  verdict = c(verdicts$H1$verdict, verdicts$H2$verdict,
+              verdicts$H3$verdict)
+) |> kable()
+```
+
+H1 asked whether the R GBM AUC lands within 0.01 of the Python champion's
+0.7810. H2 asked whether the GAM loses no more than 0.02 AUC against the
+GBM. H3 asked whether at least one protected attribute shows an
+equal-opportunity gap above 5 percentage points at the champion
+threshold.
+
+The GAM's smooth terms (effective degrees of freedom and significance)
+are in `results/gam_terms.csv`, with the full mgcv summary in
+`results/gam_summary.txt`.
+
+# Fairness audit
+
+The audit runs on the R GBM arm at the frozen champion threshold 0.2293
+(approve if and only if predicted PD is at or below 0.2293, the study
+cut-off recorded in credit-risk-lab). Flagged means predicted PD above
+the threshold. TPR is the share of actual defaulters flagged; PPV is the
+share of flagged accounts that default; selection rate is the share
+approved.
+
+```{r}
+#| label: fairness-table
+fair$event_rate <- fmt(fair$event_rate, 3)
+fair$tpr <- fmt(fair$tpr, 3)
+fair$ppv <- fmt(fair$ppv, 3)
+fair$selection_rate <- fmt(fair$selection_rate, 3)
+kable(fair[, c("attribute", "group", "n", "defaults", "event_rate",
+               "tpr", "ppv", "selection_rate")],
+      caption = "Per-group fairness table, R GBM arm, locked test set, threshold 0.2293.")
+```
+
+```{r}
+#| label: gaps-table
+gaps$equal_opportunity_gap_pp <- fmt(gaps$equal_opportunity_gap_pp, 2)
+gaps$predictive_parity_gap_pp <- fmt(gaps$predictive_parity_gap_pp, 2)
+kable(gaps, caption = "Gap summary by attribute, percentage points.")
+```
+
+# Claims ceiling
+
+This is a study on public Taiwan 2005 data. It evidences method only:
+reproducing a published pipeline in a second language and auditing its
+group fairness on the same split. It is not production experience, not a
+Canadian portfolio result, and not a claim about any real lender. The
+societal stake it speaks to is fair access to credit in Canada: a
+champion model whose errors fall unevenly on protected groups is a
+finding about the model, and it matters most exactly where credit
+decisions gate people's lives.
