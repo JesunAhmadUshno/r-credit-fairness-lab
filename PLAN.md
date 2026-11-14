@@ -21,5 +21,5 @@
    it flags; re-check.
 10. renv snapshot; CI workflow; push; confirm CI green on the results
     commit.
-11. Grade the repo on the 10,000-point house standard (grade reported to
+11. Grade the repo on the house standard (grade reported to
     the coordinator only, never committed).
