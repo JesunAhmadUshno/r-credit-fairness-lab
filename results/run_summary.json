@@ -1,0 +1,20 @@
+{
+  "r_version": "R version 4.5.1 (2025-06-13)",
+  "engine_gbm": "xgboost",
+  "seed": 42,
+  "chosen_penalty_glmnet": 0.0001,
+  "gbm_determinism": {
+    "auc_run1": 0.78237323,
+    "auc_run2": 0.78237323,
+    "gap": 0
+  },
+  "gam_deviance_explained": 0.16716485,
+  "threshold": 0.2293,
+  "runtime_seconds": 31.84922266,
+  "packages": {
+    "tidymodels": "1.5.0",
+    "glmnet": "5.2",
+    "xgboost": "3.2.1.1",
+    "mgcv": "1.9.3"
+  }
+}

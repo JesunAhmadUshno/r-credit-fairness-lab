@@ -1,9 +1,9 @@
 test_that("data file hash matches the pre-registration", {
-  expect_identical(file_sha256(DATA_FILE), DATA_SHA256)
+  expect_identical(file_sha256(DATA_ABS), DATA_SHA256)
 })
 
 test_that("loaded data matches the frozen schema", {
-  df <- load_credit_data()
+  df <- load_credit_data(DATA_ABS)
   expect_equal(nrow(df), 30000)
   expect_true(all(c("ID", "LIMIT_BAL", "SEX", "EDUCATION", "MARRIAGE",
                     "AGE", PAY_COLS, "BILL_AMT1", "BILL_AMT6",
@@ -18,7 +18,7 @@ test_that("loaded data matches the frozen schema", {
 })
 
 test_that("feature engineering mirrors the Python formulas", {
-  df <- add_features(load_credit_data())
+  df <- add_features(load_credit_data(DATA_ABS))
   expect_true(all(c("utilization", "pay_ratio", "delinq_mean",
                     "delinq_max", "bill_trend") %in% names(df)))
   expect_true(all(df$pay_ratio >= -1 & df$pay_ratio <= 5))

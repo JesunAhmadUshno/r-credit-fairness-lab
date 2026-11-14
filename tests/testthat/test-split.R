@@ -1,5 +1,5 @@
 test_that("R split reproduces the locked Python split exactly", {
-  df <- load_credit_data()
+  df <- load_credit_data(DATA_ABS)
   split <- sklearn_stratified_split(df$default, test_size = 0.30,
                                     seed = 42)
   expect_equal(length(split$train_pos), 21000)

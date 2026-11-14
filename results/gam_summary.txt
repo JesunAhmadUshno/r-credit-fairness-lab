@@ -1,0 +1,45 @@
+
+Family: binomial 
+Link function: logit 
+
+Formula:
+default ~ s(LIMIT_BAL, k = 10) + s(AGE, k = 10) + s(BILL_AMT1, 
+    k = 10) + s(PAY_AMT1, k = 10) + s(utilization, k = 10) + 
+    s(pay_ratio, k = 10) + s(bill_trend, k = 10) + delinq_mean + 
+    delinq_max + PAY_0 + PAY_2 + PAY_3 + PAY_4 + PAY_5 + PAY_6 + 
+    SEX + EDUCATION + MARRIAGE
+
+Parametric coefficients:
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.806852   0.058341 -30.971  < 2e-16 ***
+delinq_mean  0.889553   0.072562  12.259  < 2e-16 ***
+delinq_max   0.314823   0.030878  10.196  < 2e-16 ***
+PAY_0        0.315215   0.023752  13.271  < 2e-16 ***
+PAY_2       -0.055710   0.026140  -2.131 0.033069 *  
+PAY_3       -0.049491   0.027521  -1.798 0.072133 .  
+PAY_4       -0.070288   0.028935  -2.429 0.015132 *  
+PAY_5       -0.048611   0.031184  -1.559 0.119034    
+PAY_6       -0.091364   0.026641  -3.429 0.000605 ***
+SEX2        -0.092413   0.038276  -2.414 0.015763 *  
+EDUCATION2  -0.036520   0.044006  -0.830 0.406609    
+EDUCATION3  -0.098005   0.059113  -1.658 0.097329 .  
+EDUCATION4  -1.108010   0.221467  -5.003 5.64e-07 ***
+MARRIAGE2   -0.177079   0.043059  -4.112 3.91e-05 ***
+MARRIAGE3   -0.007901   0.159210  -0.050 0.960421    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Approximate significance of smooth terms:
+                 edf Ref.df Chi.sq  p-value    
+s(LIMIT_BAL)   1.564  1.950 22.080 1.23e-05 ***
+s(AGE)         1.012  1.024  0.479    0.496    
+s(BILL_AMT1)   7.016  8.124 67.830  < 2e-16 ***
+s(PAY_AMT1)    5.277  6.301 51.778  < 2e-16 ***
+s(utilization) 4.131  5.203 38.812 2.71e-06 ***
+s(pay_ratio)   2.737  3.360 31.984 1.72e-06 ***
+s(bill_trend)  6.674  7.770 35.412 1.15e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+R-sq.(adj) =  0.198   Deviance explained = 16.7%
+-REML = 9335.1  Scale est. = 1         n = 21000

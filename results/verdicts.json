@@ -1,0 +1,19 @@
+{
+  "H1": {
+    "rule": "|AUC_R_GBM - 0.7810| <= 0.01",
+    "r_gbm_auc": 0.78237323,
+    "difference": 0.00137323,
+    "verdict": "CONFIRMED"
+  },
+  "H2": {
+    "rule": "AUC_R_GBM - AUC_R_GAM <= 0.02",
+    "r_gam_auc": 0.76147425,
+    "difference": 0.02089897,
+    "verdict": "REFUTED"
+  },
+  "H3": {
+    "rule": "largest equal-opportunity gap across sex, age bands, education > 5 pp",
+    "max_equal_opportunity_gap_pp": 39.15841584,
+    "verdict": "CONFIRMED"
+  }
+}

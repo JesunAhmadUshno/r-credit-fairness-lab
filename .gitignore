@@ -6,3 +6,5 @@ renv/library/
 renv/staging/
 report/*.html.tmp
 *.log
+renv/library/
+renv/staging/

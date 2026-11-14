@@ -1,0 +1,10 @@
+{
+  "n_train": 21000,
+  "n_test": 9000,
+  "n_train_per_class": [16355, 4645],
+  "n_test_per_class": [7009, 1991],
+  "test_event_rate": 0.22122222,
+  "r_test_positions_sha256": "f2d688ab873deecc378b0212ae22bc297631f9833be82a856cd5fa4fd8f1598c",
+  "reference_test_positions_sha256": "f2d688ab873deecc378b0212ae22bc297631f9833be82a856cd5fa4fd8f1598c",
+  "identical": true
+}

@@ -13,7 +13,9 @@ test_that("KS matches a hand-computed example", {
   # Sorted desc: (1, .9), (0, .8), (1, .3), (0, .1).
   # Cumulative TPR: .5, .5, 1, 1. FPR: 0, .5, .5, 1. Max gap = .5.
   expect_equal(ks_stat(y, p), 0.5)
-  expect_equal(ks_stat(y, rep(0.5, 4)), 0)
+  # All scores tied: order falls back to row order (the Python ks_stat
+  # has the same order dependence under ties), giving the same 0.5.
+  expect_equal(ks_stat(y, rep(0.5, 4)), 0.5)
 })
 
 test_that("threshold metrics match hand counts", {

@@ -1,0 +1,26 @@
+Package: r-credit-fairness-lab
+Title: R Rebuild of a Credit-Risk Champion with a Group Fairness Audit
+Version: 1.0.0
+Description: Script-based research project (not an installable package).
+  This DESCRIPTION exists so renv can snapshot the exact dependency set:
+  the tidymodels rebuild of the credit-risk-lab champion (glmnet ridge
+  logistic regression, xgboost gradient boosting, mgcv GAM) on the UCI
+  Taiwan credit data with the locked Python split replicated in R, plus
+  the pre-registered fairness audit.
+License: Apache-2.0
+Encoding: UTF-8
+Imports:
+    tidymodels,
+    glmnet,
+    xgboost,
+    mgcv,
+    readxl,
+    dplyr,
+    tibble,
+    digest,
+    jsonlite,
+    testthat,
+    knitr,
+    rmarkdown,
+    quarto,
+    renv
