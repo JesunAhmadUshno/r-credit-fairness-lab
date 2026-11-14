@@ -1,0 +1,1 @@
+{"dependencies":{"react":"19.3.1","react-dom":"19.3.1"},"devDependencies":{"@vitejs/plugin-react":"6.2.1","vite":"8.3.6"},"name":"r-credit-fairness-lab-site","private":true,"scripts":{"build":"node src/make-data.mjs && node src/check.mjs && vite build","dev":"vite","preview":"vite preview"},"type":"module"}
