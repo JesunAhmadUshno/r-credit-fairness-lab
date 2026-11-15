@@ -26,6 +26,13 @@
   --footer-bg: #141310;
   --footer-text: #a39d92;
   --footer-code-bg: rgba(255, 255, 255, 0.08);
+  --scb-bg: var(--surface-strong);
+  --scb-fg: var(--text);
+  --scb-accent: var(--primary);
+  --scb-accent-fg: var(--btn-ink);
+  --scb-border: var(--border);
+  --scb-radius: var(--radius-md);
+  --scb-font: var(--font-sans);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
