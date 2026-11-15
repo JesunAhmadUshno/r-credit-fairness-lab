@@ -278,6 +278,10 @@ export default function App() {
         <p className="hint">
           <a href={REPO}>github.com/JesunAhmadUshno/r-credit-fairness-lab</a>
         </p>
+        <div className="support">
+          <a className="support-pill" href="https://github.com/sponsors/JesunAhmadUshno">Sponsor this work</a>
+          <a className="support-pill" href="https://calendly.com/jesunahmadushno/30min">Work with me</a>
+        </div>
       </footer>
     </div>
   );
