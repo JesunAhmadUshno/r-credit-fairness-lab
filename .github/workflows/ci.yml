@@ -28,3 +28,11 @@ jobs:
       - name: Check the split verification artifact
         run: |
           Rscript -e 'v <- jsonlite::read_json("results/split_verification.json"); stopifnot(isTRUE(v$identical))'
+
+      - name: Toolkit reproduction check (study config asserts AUC 0.78237)
+        run: |
+          Rscript R/run_toolkit.R --data "data/default of credit card clients.xls" \
+            --config scripts/toolkit_config_study.json --out-dir toolkit_out
+          diff results/model_metrics.csv toolkit_out/model_metrics.csv
+          diff results/fairness_audit.csv toolkit_out/fairness_audit.csv
+          diff results/fairness_gaps.csv toolkit_out/fairness_gaps.csv

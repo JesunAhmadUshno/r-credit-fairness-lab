@@ -76,12 +76,66 @@ CI (GitHub Actions, ubuntu-24.04) restores renv, runs the tests, runs
 the pipeline end to end, and asserts the split verification file
 reports the split identical.
 
+## Toolkit usage
+
+`R/run_toolkit.R` runs the same pipeline as a tool: give it a
+dataset and a small JSON config, and it writes the study's three
+tables (`model_metrics.csv`, `fairness_audit.csv`,
+`fairness_gaps.csv`) plus a `toolkit_summary.json` to an output
+directory. It reuses the study's own functions and arm code with the
+same seeds, and never writes into `results/`: the frozen study is
+untouched.
+
+The dataset is a CSV (or the study's `.xls`) with the study schema:
+the UCI Taiwan credit columns (`LIMIT_BAL`, `SEX`, `AGE`,
+`EDUCATION`, `MARRIAGE`, `PAY_0` to `PAY_6`, `BILL_AMT1` to
+`BILL_AMT6`, `PAY_AMT1` to `PAY_AMT6`) and a binary target. The
+config keys are `target_column`, `threshold` (fairness audit
+operating point), `protected_attributes` (a subset of `SEX`, `AGE`,
+`EDUCATION`, audited with the study's groupings), `seed`,
+`test_size`, an optional `reference_arm` row for the metrics table,
+and `expected_gbm_auc`: when set, the run stops loudly if the GBM
+test AUC differs from it by more than 0.0005.
+
+Worked example, the study configuration
+(`scripts/toolkit_config_study.json`) on the frozen dataset:
+
+```sh
+Rscript -e 'renv::restore()'
+Rscript R/run_toolkit.R \
+  --data "data/default of credit card clients.xls" \
+  --config scripts/toolkit_config_study.json \
+  --out-dir toolkit_out
+```
+
+Output (abridged; the full run takes about 50 seconds here):
+
+```
+loaded 30000 rows; events 6636; event rate 0.2212
+split: train n=21000, test n=9000 (seed 42, test_size 0.30)
+arm 1 (ridge logistic): chosen penalty 0.0001
+arm 2 (xgboost GBM): AUC run1 0.782373 run2 0.782373 gap 0
+arm 3 (mgcv GAM): fitted, deviance explained 0.167
+reproduction check PASSED: GBM AUC 0.78237 within 0.0005 of 0.78237
+```
+
+and the three tables in `toolkit_out/` are byte-identical to the
+study's committed tables in `results/` (CI diffs them on every
+push). The same command with a CSV export of the dataset in place
+of the `.xls` gives the same tables. For another dataset with this
+schema, copy the study config, drop `expected_gbm_auc` and
+`reference_arm`, and set the threshold and protected attributes you
+want audited.
+
 ## Layout
 
 - `PREREGISTRATION.md`: frozen hypotheses, split, threshold, rules.
 - `RESULTS.md`: verdicts, verification, limitations, claims ceiling.
-- `R/`: split replication, data loading, metrics, fairness audit.
+- `R/`: split replication, data loading, metrics, fairness audit,
+  and `run_toolkit.R`, the toolkit entry point (see Toolkit usage).
 - `scripts/run_all.R`: the one scripted pipeline path.
+- `scripts/toolkit_config_study.json`: the toolkit's study
+  configuration, which reproduces the published tables.
 - `results/`: machine-readable outputs of the run of record.
 - `report/`: Quarto source and the committed rendered HTML.
 - `tests/`: testthat suite (schema, metrics, exact split identity).

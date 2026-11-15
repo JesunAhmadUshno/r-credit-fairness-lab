@@ -1,0 +1,1 @@
+{"expected_gbm_auc":0.78237,"protected_attributes":["SEX","AGE","EDUCATION"],"reference_arm":{"arm":"python_champion_histgbm","auc":0.781,"brier":0.1355,"ks":0.4196},"seed":42,"target_column":"default","test_size":0.3,"threshold":0.2293}

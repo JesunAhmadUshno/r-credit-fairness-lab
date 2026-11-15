@@ -8,3 +8,4 @@ report/*.html.tmp
 *.log
 renv/library/
 renv/staging/
+toolkit_out/
