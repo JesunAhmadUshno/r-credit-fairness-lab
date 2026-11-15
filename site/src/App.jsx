@@ -38,6 +38,54 @@ function VerdictCard({ id, title, v, children }) {
   );
 }
 
+
+function StructureDiagram() {
+  const rows = [
+    { y: 16, boxes: [[20, 'UCI Taiwan data', 'credit card clients'], [240, 'Locked split', 'stratified 70/30'], [460, 'Hash check', 'test positions, SHA-256']] },
+    { y: 112, boxes: [[20, 'Ridge logistic', 'glmnet'], [180, 'GBM', 'xgboost engine'], [340, 'GAM', 'mgcv'], [500, 'Python champion', 'HistGBM']] },
+    { y: 208, boxes: [[20, 'Test metrics', 'AUC, KS, Brier'], [240, 'Fairness audit', 'TPR and PPV by group'], [460, 'Verdicts', 'H1, H2, H3, frozen rules']] },
+  ];
+  return (
+    <svg className="diagram" viewBox="0 0 680 288" role="img" aria-label="Structure diagram of the study: UCI Taiwan data and the locked, hash-checked split feed four model arms, whose test metrics and fairness audit produce the three verdicts">
+      {rows.map((row) => row.boxes.map(([x, title, sub]) => {
+        const w = row.boxes.length === 4 ? 160 : 200;
+        return (
+          <g key={title}>
+            <rect className={row.y === 112 ? 'box-accent' : 'box'} x={x} y={row.y} width={w} height="56" rx="14" />
+            <text className="box-title" x={x + w / 2} y={row.y + 24} textAnchor="middle">{title}</text>
+            <text x={x + w / 2} y={row.y + 42} textAnchor="middle">{sub}</text>
+          </g>
+        );
+      }))}
+      <line className="arrow" x1="340" y1="72" x2="340" y2="112" />
+      <line className="arrow" x1="340" y1="168" x2="340" y2="208" />
+    </svg>
+  );
+}
+
+function FlowDiagram() {
+  const steps = [
+    [2, 'Freeze', 'hypotheses first'],
+    [118, 'Split in R', 'hash matched'],
+    [234, 'Fit arms', 'four arms'],
+    [350, 'Score', 'locked test split'],
+    [466, 'Audit', 'TPR, PPV gaps'],
+    [582, 'Verdicts', 'frozen lines'],
+  ];
+  return (
+    <svg className="diagram" viewBox="0 0 680 104" role="img" aria-label="Flow diagram of the study: hypotheses frozen, split replicated in R and hash matched, four arms fit and scored on the locked test split, fairness audited, verdicts read against the frozen lines">
+      {steps.map(([x, title, sub], i) => (
+        <g key={title}>
+          <rect className={i === 0 || i === 5 ? 'box-accent' : 'box'} x={x} y="24" width="96" height="56" rx="14" />
+          <text className="box-title" x={x + 48} y="48" textAnchor="middle">{title}</text>
+          <text x={x + 48} y="66" textAnchor="middle">{sub}</text>
+          {i < steps.length - 1 && <line className="arrow" x1={x + 96} y1="52" x2={x + 116} y2="52" />}
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 function GapBars() {
   return (
     <div className="bars">
@@ -71,6 +119,7 @@ export default function App() {
           <a href="#performance">Performance</a>
           <a href="#fairness">Fairness</a>
           <a href="#split">Split integrity</a>
+          <a href="#method">Method</a>
           <a href={blob('RESULTS.md')}>RESULTS.md</a>
           <a href={REPO}>GitHub</a>
         </div>
@@ -257,6 +306,28 @@ export default function App() {
             mgcv {run.packages.mgcv}, glmnet {run.packages.glmnet}; seed set {run.seed} only. Every number
             on this page is generated at build time from the committed files in results/.
           </p>
+        </div>
+      </section>
+
+
+      <section id="method">
+        <div className="card">
+          <div className="head">
+            <div>
+              <p className="eyebrow">Method</p>
+              <h2>How the study is put together</h2>
+            </div>
+            <span className="pill good">Same split, same threshold</span>
+          </div>
+          <p className="sub">
+            Three layers: the data and its locked split, the four model arms fit in R with the
+            Python champion alongside, and the audit layer that reads test metrics and group
+            fairness at the champion threshold, {run.threshold}.
+          </p>
+          <h3 className="diagram-title">Structure diagram</h3>
+          <StructureDiagram />
+          <h3 className="diagram-title">Study flow</h3>
+          <FlowDiagram />
         </div>
       </section>
 
